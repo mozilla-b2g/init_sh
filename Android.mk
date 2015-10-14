@@ -10,7 +10,7 @@ LOCAL_MODULE       := init.sh
 LOCAL_MODULE_PATH  := $(TARGET_ROOT_OUT)/sbin
 LOCAL_MODULE_CLASS := EXECUTABLES
 LOCAL_SRC_FILES    := init.sh
-LOCAL_REQUIRED_MODULES := busybox init extract_elf_ramdisk
+LOCAL_REQUIRED_MODULES := static_min_busybox init extract_elf_ramdisk
 include $(BUILD_PREBUILT)
 
 root_init      := $(TARGET_ROOT_OUT)/init
@@ -19,7 +19,7 @@ root_init_real := $(TARGET_ROOT_OUT)/init.real
 	# If /init is a file and not a symlink then rename it to /init.real
 	# and make /init be a symlink to /sbin/init.sh (which will execute
 	# /init.real, if appropriate.
-$(root_init_real): $(root_init) $(TARGET_ROOT_OUT)/sbin/bootrec-device
+$(root_init_real): $(root_init) $(TARGET_ROOT_OUT)/sbin/bootrec-device $(TARGET_ROOT_OUT)/sbin/busybox
 	$(hide) echo "===== BEFORE ====="
 	$(hide) ls -l $(TARGET_ROOT_OUT)
 	$(hide) if [ ! -L $(root_init) ]; then \
@@ -35,13 +35,6 @@ $(root_init_real): $(root_init) $(TARGET_ROOT_OUT)/sbin/bootrec-device
 	$(hide) ln -s busybox $(TARGET_ROOT_OUT)/sbin/sh
 
 ALL_DEFAULT_INSTALLED_MODULES += $(root_init_real)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE       := busybox
-LOCAL_MODULE_PATH  := $(TARGET_ROOT_OUT)/sbin
-LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_SRC_FILES    := busybox
-include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE       := extract_elf_ramdisk
